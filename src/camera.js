@@ -1,4 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { createEvento } from "./axios/api";
 import { useRef, useState } from "react";
 import {
   Button,
@@ -20,13 +21,14 @@ export default function Cam() {
   if (!permission) return <View />;
 
   if (!permission.granted) {
-    return(
-    <View style={styles.container}>
-      <Text style={{ textAlign: "center" }}>
-        Precisamos de permissão para exibir a câmera
-      </Text>
-      <Button onPress={requestPermission} title="Permitir" />
-    </View>)
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          Precisamos de permissão para exibir a câmera
+        </Text>
+        <Button onPress={requestPermission} title="Permitir" />
+      </View>
+    );
   }
 
   async function takePicture() {
@@ -34,12 +36,27 @@ export default function Cam() {
       const data = await camRef.current.takePictureAsync();
       setCapturedPhoto(data.uri);
       setOpen(true);
+
+      // simular um formulario
+      const form = {
+        nome: "Evento teste",
+        descricao: "Evento teste image mobile",
+        data_hora: "2025-09-03 09:00:00",
+        local: "Franca",
+        fk_id_organizador: 1,
+      };
+      try {
+        const response = await createEvento(form, data.uri);
+        console.log("Evento criado", response.data);
+      } catch (error) {
+        console.log("Error", error.response.data.error);
+      }
     }
   }
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} ref={camRef} >
+      <CameraView style={styles.camera} ref={camRef}>
         <TouchableOpacity style={styles.buttonTake} onPress={takePicture}>
           <MaterialIcons name="camera" size={60} color="white" />
         </TouchableOpacity>
