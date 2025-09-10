@@ -30,5 +30,10 @@ export const createEvento = async (form, imageUri) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+
   });
+  
+};
+export const getEventos = async () => {
+  return api.get("/evento"); // já retorna todos os eventos
 };
